@@ -9,12 +9,8 @@
 <body>
     <div class="container">
         <header>
-            <img src="IMG_9407.JPG" alt="Camp Logo" class="header-logo header-logo-left">
-            <div class="header-content">
-                <h1>Emma's Awesome App</h1>
-                <p class="subtitle">Summer Camp Schedule Manager</p>
-            </div>
-            <img src="IMG_9407.JPG" alt="Camp Logo" class="header-logo header-logo-right">
+            <h1>Emma's Awesome App</h1>
+            <p class="subtitle">Summer Camp Schedule Manager</p>
         </header>
 
         <main>
@@ -61,12 +57,10 @@
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="red" data-index="4" placeholder="Staff member 5">
                                 <button class="lifeguard-toggle" data-group="red" data-index="4" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="red" data-index="4" title="Toggle Senior Counselor">🎓</button>
                             </div>
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="red" data-index="5" placeholder="Staff member 6">
                                 <button class="lifeguard-toggle" data-group="red" data-index="5" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="red" data-index="5" title="Toggle Senior Counselor">🎓</button>
                             </div>
                         </div>
                     </div>
@@ -91,27 +85,23 @@
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="blue" data-index="1" placeholder="Staff member 2">
                                 <button class="lifeguard-toggle" data-group="blue" data-index="1" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="blue" data-index="1" title="Toggle Senior Counselor">🎓</button>
                             </div>
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="blue" data-index="2" placeholder="Staff member 3">
                                 <button class="lifeguard-toggle" data-group="blue" data-index="2" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="blue" data-index="2" title="Toggle Senior Counselor">🎓</button>
                             </div>
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="blue" data-index="3" placeholder="Staff member 4">
                                 <button class="lifeguard-toggle" data-group="blue" data-index="3" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="blue" data-index="3" title="Toggle Senior Counselor">🎓</button>
+                                <button class="senior-toggle" data-group="red" data-index="3" title="Toggle Senior Counselor">🎓</button>
                             </div>
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="blue" data-index="4" placeholder="Staff member 5">
                                 <button class="lifeguard-toggle" data-group="blue" data-index="4" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="blue" data-index="4" title="Toggle Senior Counselor">🎓</button>
                             </div>
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="blue" data-index="5" placeholder="Staff member 6">
                                 <button class="lifeguard-toggle" data-group="blue" data-index="5" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="blue" data-index="5" title="Toggle Senior Counselor">🎓</button>
                             </div>
                         </div>
                     </div>
@@ -131,32 +121,27 @@
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="orange" data-index="0" placeholder="Staff member 1">
                                 <button class="lifeguard-toggle" data-group="orange" data-index="0" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="orange" data-index="0" title="Toggle Senior Counselor">🎓</button>
                             </div>
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="orange" data-index="1" placeholder="Staff member 2">
                                 <button class="lifeguard-toggle" data-group="orange" data-index="1" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="orange" data-index="1" title="Toggle Senior Counselor">🎓</button>
                             </div>
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="orange" data-index="2" placeholder="Staff member 3">
                                 <button class="lifeguard-toggle" data-group="orange" data-index="2" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="orange" data-index="2" title="Toggle Senior Counselor">🎓</button>
                             </div>
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="orange" data-index="3" placeholder="Staff member 4">
                                 <button class="lifeguard-toggle" data-group="orange" data-index="3" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="orange" data-index="3" title="Toggle Senior Counselor">🎓</button>
+                                <button class="senior-toggle" data-group="red" data-index="3" title="Toggle Senior Counselor">🎓</button>
                             </div>
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="orange" data-index="4" placeholder="Staff member 5">
                                 <button class="lifeguard-toggle" data-group="orange" data-index="4" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="orange" data-index="4" title="Toggle Senior Counselor">🎓</button>
                             </div>
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="orange" data-index="5" placeholder="Staff member 6">
                                 <button class="lifeguard-toggle" data-group="orange" data-index="5" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="orange" data-index="5" title="Toggle Senior Counselor">🎓</button>
                             </div>
                         </div>
                     </div>
@@ -176,32 +161,27 @@
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="green" data-index="0" placeholder="Staff member 1">
                                 <button class="lifeguard-toggle" data-group="green" data-index="0" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="green" data-index="0" title="Toggle Senior Counselor">🎓</button>
                             </div>
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="green" data-index="1" placeholder="Staff member 2">
                                 <button class="lifeguard-toggle" data-group="green" data-index="1" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="green" data-index="1" title="Toggle Senior Counselor">🎓</button>
                             </div>
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="green" data-index="2" placeholder="Staff member 3">
                                 <button class="lifeguard-toggle" data-group="green" data-index="2" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="green" data-index="2" title="Toggle Senior Counselor">🎓</button>
                             </div>
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="green" data-index="3" placeholder="Staff member 4">
                                 <button class="lifeguard-toggle" data-group="green" data-index="3" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="green" data-index="3" title="Toggle Senior Counselor">🎓</button>
+                                <button class="senior-toggle" data-group="red" data-index="3" title="Toggle Senior Counselor">🎓</button>
                             </div>
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="green" data-index="4" placeholder="Staff member 5">
                                 <button class="lifeguard-toggle" data-group="green" data-index="4" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="green" data-index="4" title="Toggle Senior Counselor">🎓</button>
                             </div>
                             <div class="staff-row">
                                 <input type="text" class="staff-input" data-group="green" data-index="5" placeholder="Staff member 6">
                                 <button class="lifeguard-toggle" data-group="green" data-index="5" title="Toggle Lifeguard Certified">🛟</button>
-                                <button class="senior-toggle" data-group="green" data-index="5" title="Toggle Senior Counselor">🎓</button>
                             </div>
                         </div>
                     </div>

@@ -47,9 +47,40 @@ header {
     text-align: center;
     position: relative;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
 }
 
-header::after {
+.header-content {
+    flex: 0 1 auto;
+    z-index: 2;
+}
+
+.header-logo {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 15px;
+    border: 4px solid #FFF8DC;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.header-logo-left {
+    transform: rotate(-8deg);
+}
+
+.header-logo-right {
+    transform: rotate(8deg);
+}
+
+.header-logo:hover {
+    transform: rotate(0deg) scale(1.05);
+}
+
+.header-content::after {
     content: '🌲 ⛺ 🔥 🌞 🌲';
     display: block;
     font-size: 1.5em;
@@ -101,6 +132,17 @@ main {
     transition: all 0.3s;
     font-family: 'Comic Sans MS', 'Trebuchet MS', cursive, sans-serif;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary {
+    background: linear-gradient(145deg, #228B22 0%, #1B5E20 100%);
+    color: #FFF8DC;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(145deg, #1B5E20 0%, #0D4710 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 .btn-danger {
@@ -302,10 +344,153 @@ main {
     transform: scale(1.15);
 }
 
+.senior-toggle {
+    flex-shrink: 0;
+    width: 35px;
+    height: 35px;
+    border: 2px solid #8B4513;
+    border-radius: 50%;
+    background: #F5F5DC;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    opacity: 0.3;
+}
+
+.senior-toggle:hover {
+    transform: scale(1.1);
+    opacity: 0.5;
+}
+
+.senior-toggle.active {
+    opacity: 1;
+    background: linear-gradient(145deg, #FFD700, #FFA500);
+    border-color: #DAA520;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.senior-toggle.active:hover {
+    transform: scale(1.15);
+}
+
+/* Activity Groups Section */
+.activity-section {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 3px solid #8B4513;
+}
+
+.activity-section h2 {
+    margin-bottom: 25px;
+    color: #2E7D32;
+    font-size: 2em;
+    text-align: center;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.activity-periods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.period-block {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(240, 248, 255, 0.95));
+    border: 3px solid #4682B4;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.period-block h3 {
+    color: #1E90FF;
+    font-size: 1.4em;
+    margin-bottom: 15px;
+    text-align: center;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    border-bottom: 2px solid #87CEEB;
+    padding-bottom: 10px;
+}
+
+.period-assignments {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.unit-assignment {
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 5px solid #228B22;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.unit-header {
+    color: #2E7D32;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #87CEEB;
+}
+
+.unit-staff {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.staff-role {
+    font-size: 0.95em;
+    line-height: 1.5;
+    padding: 4px 0;
+}
+
+.staff-role strong {
+    color: #1E90FF;
+    min-width: 100px;
+    display: inline-block;
+}
+
 /* Responsive */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .header-logo {
+        width: 100px;
+        height: 100px;
+    }
+
+    header {
+        gap: 20px;
+    }
+}
+
 @media (max-width: 768px) {
     .groups-container {
         grid-template-columns: 1fr;
+    }
+
+    header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 30px 20px;
+    }
+
+    .header-logo {
+        width: 80px;
+        height: 80px;
+    }
+
+    .header-logo-left {
+        transform: rotate(-12deg);
+    }
+
+    .header-logo-right {
+        transform: rotate(12deg);
     }
 
     header h1 {
@@ -316,7 +501,7 @@ main {
         flex-direction: column;
     }
 
-    header::after {
+    .header-content::after {
         font-size: 1.2em;
         letter-spacing: 5px;
     }
@@ -334,5 +519,31 @@ main {
         width: 30px;
         height: 30px;
         font-size: 1em;
+    }
+
+    .senior-toggle {
+        width: 30px;
+        height: 30px;
+        font-size: 1em;
+    }
+
+    .activity-periods {
+        grid-template-columns: 1fr;
+    }
+
+    .period-block h3 {
+        font-size: 1.2em;
+    }
+
+    .unit-header {
+        font-size: 1em;
+    }
+
+    .staff-role {
+        font-size: 0.85em;
+    }
+
+    .staff-role strong {
+        min-width: 80px;
     }
 }

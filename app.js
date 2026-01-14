@@ -1,9 +1,9 @@
-// Staff data structure: { red: [{name: '', lifeguard: false}, ...], blue: [...], orange: [...], green: [...] }
+// Staff data structure: { red: [{name: '', lifeguard: false, senior: false}, ...], blue: [...], orange: [...], green: [...] }
 let staffData = {
-    red: Array(6).fill(null).map(() => ({name: '', lifeguard: false})),
-    blue: Array(6).fill(null).map(() => ({name: '', lifeguard: false})),
-    orange: Array(6).fill(null).map(() => ({name: '', lifeguard: false})),
-    green: Array(6).fill(null).map(() => ({name: '', lifeguard: false}))
+    red: Array(6).fill(null).map(() => ({name: '', lifeguard: false, senior: false})),
+    blue: Array(6).fill(null).map(() => ({name: '', lifeguard: false, senior: false})),
+    orange: Array(6).fill(null).map(() => ({name: '', lifeguard: false, senior: false})),
+    green: Array(6).fill(null).map(() => ({name: '', lifeguard: false, senior: false}))
 };
 
 // Track which group is currently on break (null or 'red', 'blue', 'orange', 'green')
@@ -38,7 +38,11 @@ function migrateData(data) {
         if (Array.isArray(data[group])) {
             migrated[group] = data[group].map(item => {
                 if (typeof item === 'string') {
-                    return {name: item, lifeguard: false};
+                    return {name: item, lifeguard: false, senior: false};
+                }
+                // Add senior field if it doesn't exist
+                if (typeof item === 'object' && !item.hasOwnProperty('senior')) {
+                    return {...item, senior: false};
                 }
                 return item;
             });
@@ -59,6 +63,9 @@ function saveData() {
 
 // Initialize event listeners
 function initializeEventListeners() {
+    // Assign activity groups button
+    document.getElementById('assignGroupsBtn').addEventListener('click', assignActivityGroups);
+
     // Clear all button
     document.getElementById('clearAllBtn').addEventListener('click', clearAll);
 
@@ -71,6 +78,11 @@ function initializeEventListeners() {
     // Add click listeners to all lifeguard toggle buttons
     document.querySelectorAll('.lifeguard-toggle').forEach(button => {
         button.addEventListener('click', handleLifeguardToggle);
+    });
+
+    // Add click listeners to all senior toggle buttons
+    document.querySelectorAll('.senior-toggle').forEach(button => {
+        button.addEventListener('click', handleSeniorToggle);
     });
 
     // Add change listeners to all break checkboxes
@@ -116,6 +128,26 @@ function handleLifeguardToggle(e) {
     saveData();
 }
 
+// Handle senior counselor toggle
+function handleSeniorToggle(e) {
+    const button = e.target;
+    const group = button.getAttribute('data-group');
+    const index = parseInt(button.getAttribute('data-index'));
+
+    // Toggle the senior status
+    staffData[group][index].senior = !staffData[group][index].senior;
+
+    // Update visual state
+    if (staffData[group][index].senior) {
+        button.classList.add('active');
+    } else {
+        button.classList.remove('active');
+    }
+
+    // Save to localStorage
+    saveData();
+}
+
 // Handle break checkbox change
 function handleBreakCheckbox(e) {
     const checkbox = e.target;
@@ -145,17 +177,26 @@ function loadStaffIntoInputs() {
     Object.keys(staffData).forEach(group => {
         for (let i = 0; i < 6; i++) {
             const input = document.querySelector(`.staff-input[data-group="${group}"][data-index="${i}"]`);
-            const button = document.querySelector(`.lifeguard-toggle[data-group="${group}"][data-index="${i}"]`);
+            const lifeguardButton = document.querySelector(`.lifeguard-toggle[data-group="${group}"][data-index="${i}"]`);
+            const seniorButton = document.querySelector(`.senior-toggle[data-group="${group}"][data-index="${i}"]`);
 
             if (input && staffData[group][i]) {
                 input.value = staffData[group][i].name;
             }
 
-            if (button && staffData[group][i]) {
+            if (lifeguardButton && staffData[group][i]) {
                 if (staffData[group][i].lifeguard) {
-                    button.classList.add('active');
+                    lifeguardButton.classList.add('active');
                 } else {
-                    button.classList.remove('active');
+                    lifeguardButton.classList.remove('active');
+                }
+            }
+
+            if (seniorButton && staffData[group][i]) {
+                if (staffData[group][i].senior) {
+                    seniorButton.classList.add('active');
+                } else {
+                    seniorButton.classList.remove('active');
                 }
             }
         }
@@ -190,17 +231,266 @@ function updateGroupCount(group) {
     }
 }
 
+// Assign activity groups
+function assignActivityGroups() {
+    // Get staff organized by day-off group (excluding those on break)
+    const staffByGroup = {};
+    Object.keys(staffData).forEach(group => {
+        if (group !== onBreakGroup) {
+            staffByGroup[group] = staffData[group]
+                .filter(staff => staff.name && staff.name.trim() !== '')
+                .map(staff => ({
+                    name: staff.name,
+                    lifeguard: staff.lifeguard,
+                    group: group
+                }));
+        }
+    });
+
+    const activeGroups = Object.keys(staffByGroup);
+    if (activeGroups.length === 0) {
+        alert('Please add staff members first!');
+        return;
+    }
+
+    // Create 6 units with 1 person from each active day-off group
+    const units = [];
+    for (let i = 0; i < 6; i++) {
+        const unit = [];
+        activeGroups.forEach(group => {
+            if (staffByGroup[group][i]) {
+                unit.push(staffByGroup[group][i]);
+            }
+        });
+        if (unit.length > 0) {
+            units.push(unit);
+        }
+    }
+
+    if (units.length === 0) {
+        alert('Please add staff members first!');
+        return;
+    }
+
+    // Track assignments to avoid repeats
+    const freeTimeCount = {};
+    const roleHistory = {};
+    units.forEach(unit => {
+        unit.forEach(staff => {
+            freeTimeCount[staff.name] = 0;
+            roleHistory[staff.name] = {};
+        });
+    });
+
+    // Generate assignments for each period
+    const amSwim = assignSwimPeriodByUnits(units, freeTimeCount, roleHistory);
+    const activity1 = assignActivityPeriodByUnits(units, freeTimeCount, roleHistory);
+    const activity2 = assignActivityPeriodByUnits(units, freeTimeCount, roleHistory);
+    const pmSwim = assignSwimPeriodByUnits(units, freeTimeCount, roleHistory);
+
+    // Display results
+    displayAssignmentsByUnits('amSwimAssignments', amSwim);
+    displayAssignmentsByUnits('activity1Assignments', activity1);
+    displayAssignmentsByUnits('activity2Assignments', activity2);
+    displayAssignmentsByUnits('pmSwimAssignments', pmSwim);
+
+    // Show the activity section
+    document.getElementById('activitySection').style.display = 'block';
+}
+
+// Assign roles for a swim period organized by units
+function assignSwimPeriodByUnits(units, freeTimeCount, roleHistory) {
+    // Flatten all staff across units
+    const allStaff = units.flat();
+    const shuffled = [...allStaff].sort(() => Math.random() - 0.5);
+
+    const roleNeeds = {
+        'Lifeguard': 1,
+        'Watchers': 2,
+        'Bongo': 1,
+        'Medical Tent': 1,
+        'Trail Sweeper': 1,
+        'Free Time': 4
+    };
+
+    const assigned = {};
+    const assignedSet = new Set();
+
+    // Assign roles based on needs
+    Object.keys(roleNeeds).forEach(role => {
+        assigned[role] = [];
+        const count = roleNeeds[role];
+
+        for (let i = 0; i < count; i++) {
+            let person = null;
+
+            if (role === 'Lifeguard') {
+                // Must be certified
+                person = shuffled.find(s => s.lifeguard && !assignedSet.has(s.name) && !roleHistory[s.name][role]);
+                if (!person) {
+                    person = shuffled.find(s => s.lifeguard && !assignedSet.has(s.name));
+                }
+            } else if (role === 'Free Time') {
+                // Prioritize those with fewer free times
+                const available = shuffled.filter(s => !assignedSet.has(s.name));
+                available.sort((a, b) => freeTimeCount[a.name] - freeTimeCount[b.name]);
+                person = available[0];
+            } else {
+                // Try to find someone who hasn't had this role
+                person = shuffled.find(s => !assignedSet.has(s.name) && !roleHistory[s.name][role]);
+                if (!person) {
+                    person = shuffled.find(s => !assignedSet.has(s.name));
+                }
+            }
+
+            if (person) {
+                assigned[role].push(person.name);
+                assignedSet.add(person.name);
+                roleHistory[person.name][role] = true;
+                if (role === 'Free Time') {
+                    freeTimeCount[person.name]++;
+                }
+            }
+        }
+    });
+
+    // Not assigned
+    assigned['Not Assigned'] = shuffled
+        .filter(s => !assignedSet.has(s.name))
+        .map(s => s.name);
+
+    // Convert to unit-based display
+    return convertToUnitDisplay(units, assigned);
+}
+
+// Assign roles for an activity period organized by units
+function assignActivityPeriodByUnits(units, freeTimeCount, roleHistory) {
+    const allStaff = units.flat();
+    const shuffled = [...allStaff].sort(() => Math.random() - 0.5);
+
+    const roleNeeds = {
+        'Trail Sweeper': 1,
+        'Medical Tent': 1,
+        'Running Activity': 6,
+        'Free Time': 5
+    };
+
+    const assigned = {};
+    const assignedSet = new Set();
+
+    // Assign roles based on needs
+    Object.keys(roleNeeds).forEach(role => {
+        assigned[role] = [];
+        const count = roleNeeds[role];
+
+        for (let i = 0; i < count; i++) {
+            let person = null;
+
+            if (role === 'Free Time') {
+                // Prioritize those with fewer free times
+                const available = shuffled.filter(s => !assignedSet.has(s.name));
+                available.sort((a, b) => freeTimeCount[a.name] - freeTimeCount[b.name]);
+                person = available[0];
+            } else {
+                // Try to find someone who hasn't had this role
+                person = shuffled.find(s => !assignedSet.has(s.name) && !roleHistory[s.name][role]);
+                if (!person) {
+                    person = shuffled.find(s => !assignedSet.has(s.name));
+                }
+            }
+
+            if (person) {
+                assigned[role].push(person.name);
+                assignedSet.add(person.name);
+                roleHistory[person.name][role] = true;
+                if (role === 'Free Time') {
+                    freeTimeCount[person.name]++;
+                }
+            }
+        }
+    });
+
+    // Not assigned
+    assigned['Not Assigned'] = shuffled
+        .filter(s => !assignedSet.has(s.name))
+        .map(s => s.name);
+
+    // Convert to unit-based display
+    return convertToUnitDisplay(units, assigned);
+}
+
+// Convert role assignments to unit-based display
+function convertToUnitDisplay(units, assigned) {
+    const unitAssignments = [];
+
+    units.forEach((unit, index) => {
+        const unitNumber = index + 1;
+        const unitStaff = {};
+
+        unit.forEach(staff => {
+            // Find what role this person was assigned
+            let role = 'Not Assigned';
+            for (const r in assigned) {
+                if (assigned[r].includes(staff.name)) {
+                    role = r;
+                    break;
+                }
+            }
+            unitStaff[staff.name] = role;
+        });
+
+        unitAssignments.push({
+            unitNumber: unitNumber,
+            assignments: unitStaff
+        });
+    });
+
+    return unitAssignments;
+}
+
+// Display assignments by units in the UI
+function displayAssignmentsByUnits(elementId, unitAssignments) {
+    const container = document.getElementById(elementId);
+    container.innerHTML = '';
+
+    unitAssignments.forEach(unit => {
+        const unitDiv = document.createElement('div');
+        unitDiv.className = 'unit-assignment';
+
+        const unitHeader = document.createElement('div');
+        unitHeader.className = 'unit-header';
+        unitHeader.textContent = `Unit ${unit.unitNumber}`;
+        unitDiv.appendChild(unitHeader);
+
+        const staffList = document.createElement('div');
+        staffList.className = 'unit-staff';
+
+        Object.keys(unit.assignments).forEach(name => {
+            const role = unit.assignments[name];
+            const staffDiv = document.createElement('div');
+            staffDiv.className = 'staff-role';
+            staffDiv.innerHTML = `<strong>${name}:</strong> ${role}`;
+            staffList.appendChild(staffDiv);
+        });
+
+        unitDiv.appendChild(staffList);
+        container.appendChild(unitDiv);
+    });
+}
+
 // Clear all data
 function clearAll() {
     if (confirm('Are you sure you want to clear all staff data? This cannot be undone.')) {
         staffData = {
-            red: Array(6).fill(null).map(() => ({name: '', lifeguard: false})),
-            blue: Array(6).fill(null).map(() => ({name: '', lifeguard: false})),
-            orange: Array(6).fill(null).map(() => ({name: '', lifeguard: false})),
-            green: Array(6).fill(null).map(() => ({name: '', lifeguard: false}))
+            red: Array(6).fill(null).map(() => ({name: '', lifeguard: false, senior: false})),
+            blue: Array(6).fill(null).map(() => ({name: '', lifeguard: false, senior: false})),
+            orange: Array(6).fill(null).map(() => ({name: '', lifeguard: false, senior: false})),
+            green: Array(6).fill(null).map(() => ({name: '', lifeguard: false, senior: false}))
         };
         onBreakGroup = null;
         saveData();
         loadStaffIntoInputs();
+        // Hide activity section
+        document.getElementById('activitySection').style.display = 'none';
     }
 }
