@@ -457,6 +457,114 @@ main {
     display: inline-block;
 }
 
+/* Chore Groups Section */
+.chore-section {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 3px solid #8B4513;
+}
+
+.chore-section h2 {
+    margin-bottom: 25px;
+    color: #8B4513;
+    font-size: 2em;
+    text-align: center;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.chore-groups-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.chore-group {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 250, 240, 0.95));
+    border: 3px solid #D2691E;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s;
+}
+
+.chore-group:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.chore-group-header {
+    color: #8B4513;
+    font-weight: bold;
+    font-size: 1.3em;
+    margin-bottom: 12px;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #D2691E;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.chore-group-staff {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chore-staff-member {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+    border-left: 4px solid #228B22;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s;
+}
+
+.chore-staff-member:hover {
+    transform: translateX(4px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+.chore-staff-name {
+    font-weight: bold;
+    color: #2E7D32;
+    font-size: 1em;
+}
+
+.chore-staff-group {
+    font-size: 0.85em;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: 2px solid;
+}
+
+.red-badge {
+    background: linear-gradient(145deg, rgba(255, 240, 245, 0.95), rgba(255, 228, 225, 0.95));
+    color: #DC143C;
+    border-color: #DC143C;
+}
+
+.blue-badge {
+    background: linear-gradient(145deg, rgba(240, 248, 255, 0.95), rgba(230, 244, 255, 0.95));
+    color: #1E90FF;
+    border-color: #1E90FF;
+}
+
+.orange-badge {
+    background: linear-gradient(145deg, rgba(255, 250, 240, 0.95), rgba(255, 245, 220, 0.95));
+    color: #FF8C00;
+    border-color: #FF8C00;
+}
+
+.green-badge {
+    background: linear-gradient(145deg, rgba(240, 255, 240, 0.95), rgba(230, 250, 230, 0.95));
+    color: #228B22;
+    border-color: #228B22;
+}
+
 /* Responsive */
 @media (max-width: 1024px) and (min-width: 769px) {
     .header-logo {
@@ -545,5 +653,22 @@ main {
 
     .staff-role strong {
         min-width: 80px;
+    }
+
+    .chore-groups-container {
+        grid-template-columns: 1fr;
+    }
+
+    .chore-group-header {
+        font-size: 1.1em;
+    }
+
+    .chore-staff-name {
+        font-size: 0.9em;
+    }
+
+    .chore-staff-group {
+        font-size: 0.75em;
+        padding: 3px 8px;
     }
 }

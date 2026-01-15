@@ -66,6 +66,9 @@ function initializeEventListeners() {
     // Assign activity groups button
     document.getElementById('assignGroupsBtn').addEventListener('click', assignActivityGroups);
 
+    // Generate chore groups button
+    document.getElementById('generateChoreGroupsBtn').addEventListener('click', generateChoreGroups);
+
     // Clear all button
     document.getElementById('clearAllBtn').addEventListener('click', clearAll);
 
@@ -478,6 +481,176 @@ function displayAssignmentsByUnits(elementId, unitAssignments) {
     });
 }
 
+// Generate chore groups
+function generateChoreGroups() {
+    // Get all staff from all groups
+    const dayOffGroups = ['red', 'blue', 'orange', 'green'];
+    const allStaff = {};
+
+    // Organize staff by day-off group
+    dayOffGroups.forEach(group => {
+        allStaff[group] = staffData[group]
+            .filter(staff => staff.name && staff.name.trim() !== '')
+            .map(staff => ({
+                name: staff.name,
+                senior: staff.senior,
+                group: group
+            }));
+    });
+
+    // Verify we have staff
+    const totalStaff = Object.values(allStaff).reduce((sum, arr) => sum + arr.length, 0);
+    if (totalStaff === 0) {
+        alert('Please add staff members first!');
+        return;
+    }
+
+    // Check if all groups have the same number of staff (ideally 6)
+    const groupSizes = dayOffGroups.map(g => allStaff[g].length);
+    const maxSize = Math.max(...groupSizes);
+
+    // Create chore groups using a rotation pattern to avoid same-unit conflicts
+    const choreGroups = [];
+    for (let i = 0; i < maxSize; i++) {
+        choreGroups.push([]);
+    }
+
+    // Assign staff to chore groups with rotation to avoid unit conflicts
+    dayOffGroups.forEach((group, groupIndex) => {
+        allStaff[group].forEach((staff, staffIndex) => {
+            // Use rotation: (staffIndex + groupIndex) % maxSize
+            const choreGroupIndex = (staffIndex + groupIndex) % maxSize;
+            choreGroups[choreGroupIndex].push(staff);
+        });
+    });
+
+    // Ensure each chore group has at least one senior counselor
+    ensureSeniorInEachGroup(choreGroups);
+
+    // Display the chore groups
+    displayChoreGroups(choreGroups);
+
+    // Show the chore section
+    document.getElementById('choreSection').style.display = 'block';
+}
+
+// Ensure each chore group has at least one senior counselor
+function ensureSeniorInEachGroup(choreGroups) {
+    const groupsWithoutSenior = [];
+    const groupsWithMultipleSeniors = [];
+
+    // Identify groups with issues
+    choreGroups.forEach((group, index) => {
+        const seniorCount = group.filter(staff => staff.senior).length;
+        if (seniorCount === 0) {
+            groupsWithoutSenior.push(index);
+        } else if (seniorCount > 1) {
+            groupsWithMultipleSeniors.push(index);
+        }
+    });
+
+    // Try to swap staff to fix groups without seniors
+    groupsWithoutSenior.forEach(groupIndexWithoutSenior => {
+        // Find a group with multiple seniors
+        for (const groupIndexWithExtra of groupsWithMultipleSeniors) {
+            const groupWithoutSenior = choreGroups[groupIndexWithoutSenior];
+            const groupWithExtra = choreGroups[groupIndexWithExtra];
+
+            // Find a senior in the group with extras
+            const seniorIndex = groupWithExtra.findIndex(staff => staff.senior);
+            if (seniorIndex === -1) continue;
+
+            const senior = groupWithExtra[seniorIndex];
+
+            // Find a non-senior in the group without senior from the same day-off group
+            const nonSeniorIndex = groupWithoutSenior.findIndex(
+                staff => !staff.senior && staff.group === senior.group
+            );
+
+            if (nonSeniorIndex !== -1) {
+                // Swap them
+                const nonSenior = groupWithoutSenior[nonSeniorIndex];
+                groupWithoutSenior[nonSeniorIndex] = senior;
+                groupWithExtra[seniorIndex] = nonSenior;
+
+                // Update the tracking arrays
+                const extraIdx = groupsWithMultipleSeniors.indexOf(groupIndexWithExtra);
+                if (groupWithExtra.filter(s => s.senior).length <= 1) {
+                    groupsWithMultipleSeniors.splice(extraIdx, 1);
+                }
+                break;
+            }
+        }
+    });
+
+    // If still have groups without seniors, try any valid swap
+    choreGroups.forEach((group, index) => {
+        const seniorCount = group.filter(staff => staff.senior).length;
+        if (seniorCount === 0) {
+            // Find any group with a senior and try to swap
+            for (let otherIndex = 0; otherIndex < choreGroups.length; otherIndex++) {
+                if (otherIndex === index) continue;
+
+                const otherGroup = choreGroups[otherIndex];
+                const seniorInOther = otherGroup.find(staff => staff.senior);
+                if (!seniorInOther) continue;
+
+                // Find someone in current group from same day-off group
+                const swapCandidate = group.find(staff => staff.group === seniorInOther.group);
+                if (swapCandidate) {
+                    // Swap them
+                    const seniorIdx = otherGroup.indexOf(seniorInOther);
+                    const candidateIdx = group.indexOf(swapCandidate);
+                    group[candidateIdx] = seniorInOther;
+                    otherGroup[seniorIdx] = swapCandidate;
+                    break;
+                }
+            }
+        }
+    });
+}
+
+// Display chore groups in the UI
+function displayChoreGroups(choreGroups) {
+    const container = document.getElementById('choreGroupsContainer');
+    container.innerHTML = '';
+
+    choreGroups.forEach((group, index) => {
+        const groupDiv = document.createElement('div');
+        groupDiv.className = 'chore-group';
+
+        const groupHeader = document.createElement('div');
+        groupHeader.className = 'chore-group-header';
+
+        const hasSenior = group.some(staff => staff.senior);
+        const seniorWarning = hasSenior ? '' : ' ⚠️ No Senior Counselor';
+        groupHeader.textContent = `Chore Group ${index + 1}${seniorWarning}`;
+
+        groupDiv.appendChild(groupHeader);
+
+        const staffList = document.createElement('div');
+        staffList.className = 'chore-group-staff';
+
+        group.forEach(staff => {
+            const staffDiv = document.createElement('div');
+            staffDiv.className = 'chore-staff-member';
+
+            const seniorBadge = staff.senior ? ' 🎓' : '';
+            const groupColor = staff.group;
+
+            staffDiv.innerHTML = `
+                <span class="chore-staff-name">${staff.name}${seniorBadge}</span>
+                <span class="chore-staff-group ${groupColor}-badge">${groupColor}</span>
+            `;
+
+            staffList.appendChild(staffDiv);
+        });
+
+        groupDiv.appendChild(staffList);
+        container.appendChild(groupDiv);
+    });
+}
+
 // Clear all data
 function clearAll() {
     if (confirm('Are you sure you want to clear all staff data? This cannot be undone.')) {
@@ -492,5 +665,7 @@ function clearAll() {
         loadStaffIntoInputs();
         // Hide activity section
         document.getElementById('activitySection').style.display = 'none';
+        // Hide chore section
+        document.getElementById('choreSection').style.display = 'none';
     }
 }
