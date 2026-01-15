@@ -432,22 +432,16 @@ function displayAssignmentsByRole(elementId, assigned) {
         const roleDiv = document.createElement('div');
         roleDiv.className = 'role-assignment';
 
-        const roleHeader = document.createElement('div');
-        roleHeader.className = 'role-header';
-        roleHeader.textContent = role;
-        roleDiv.appendChild(roleHeader);
+        const roleLabel = document.createElement('span');
+        roleLabel.className = 'role-label';
+        roleLabel.textContent = role + ': ';
 
-        const staffList = document.createElement('div');
-        staffList.className = 'role-staff';
+        const staffNames = document.createElement('span');
+        staffNames.className = 'staff-names';
+        staffNames.textContent = assigned[role].join(', ');
 
-        assigned[role].forEach(name => {
-            const staffDiv = document.createElement('div');
-            staffDiv.className = 'staff-name';
-            staffDiv.textContent = name;
-            staffList.appendChild(staffDiv);
-        });
-
-        roleDiv.appendChild(staffList);
+        roleDiv.appendChild(roleLabel);
+        roleDiv.appendChild(staffNames);
         container.appendChild(roleDiv);
     });
 }

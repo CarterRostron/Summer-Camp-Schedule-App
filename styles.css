@@ -424,36 +424,23 @@ main {
 
 .role-assignment {
     background: white;
-    padding: 12px;
+    padding: 10px 12px;
     border-radius: 8px;
     border-left: 5px solid #228B22;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    line-height: 1.6;
 }
 
-.role-header {
+.role-label {
     color: #2E7D32;
     font-weight: bold;
-    font-size: 1.1em;
-    margin-bottom: 8px;
-    padding-bottom: 6px;
-    border-bottom: 2px solid #87CEEB;
+    font-size: 1em;
 }
 
-.role-staff {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.staff-name {
-    font-size: 0.95em;
-    line-height: 1.5;
-    padding: 4px 8px;
-    background: rgba(135, 206, 235, 0.1);
-    border-radius: 4px;
+.staff-names {
     color: #1E90FF;
-    font-weight: 500;
+    font-size: 0.95em;
 }
 
 /* Chore Groups Section */
@@ -642,11 +629,11 @@ main {
         font-size: 1.2em;
     }
 
-    .role-header {
-        font-size: 1em;
+    .role-label {
+        font-size: 0.9em;
     }
 
-    .staff-name {
+    .staff-names {
         font-size: 0.85em;
     }
 
