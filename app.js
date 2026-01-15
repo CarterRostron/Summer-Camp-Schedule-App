@@ -292,16 +292,16 @@ function assignActivityGroups() {
     const pmSwim = assignSwimPeriodByUnits(units, freeTimeCount, roleHistory);
 
     // Display results
-    displayAssignmentsByUnits('amSwimAssignments', amSwim);
-    displayAssignmentsByUnits('activity1Assignments', activity1);
-    displayAssignmentsByUnits('activity2Assignments', activity2);
-    displayAssignmentsByUnits('pmSwimAssignments', pmSwim);
+    displayAssignmentsByRole('amSwimAssignments', amSwim);
+    displayAssignmentsByRole('activity1Assignments', activity1);
+    displayAssignmentsByRole('activity2Assignments', activity2);
+    displayAssignmentsByRole('pmSwimAssignments', pmSwim);
 
     // Show the activity section
     document.getElementById('activitySection').style.display = 'block';
 }
 
-// Assign roles for a swim period organized by units
+// Assign roles for a swim period
 function assignSwimPeriodByUnits(units, freeTimeCount, roleHistory) {
     // Flatten all staff across units
     const allStaff = units.flat();
@@ -362,11 +362,10 @@ function assignSwimPeriodByUnits(units, freeTimeCount, roleHistory) {
         .filter(s => !assignedSet.has(s.name))
         .map(s => s.name);
 
-    // Convert to unit-based display
-    return convertToUnitDisplay(units, assigned);
+    return assigned;
 }
 
-// Assign roles for an activity period organized by units
+// Assign roles for an activity period
 function assignActivityPeriodByUnits(units, freeTimeCount, roleHistory) {
     const allStaff = units.flat();
     const shuffled = [...allStaff].sort(() => Math.random() - 0.5);
@@ -418,66 +417,38 @@ function assignActivityPeriodByUnits(units, freeTimeCount, roleHistory) {
         .filter(s => !assignedSet.has(s.name))
         .map(s => s.name);
 
-    // Convert to unit-based display
-    return convertToUnitDisplay(units, assigned);
+    return assigned;
 }
 
-// Convert role assignments to unit-based display
-function convertToUnitDisplay(units, assigned) {
-    const unitAssignments = [];
-
-    units.forEach((unit, index) => {
-        const unitNumber = index + 1;
-        const unitStaff = {};
-
-        unit.forEach(staff => {
-            // Find what role this person was assigned
-            let role = 'Not Assigned';
-            for (const r in assigned) {
-                if (assigned[r].includes(staff.name)) {
-                    role = r;
-                    break;
-                }
-            }
-            unitStaff[staff.name] = role;
-        });
-
-        unitAssignments.push({
-            unitNumber: unitNumber,
-            assignments: unitStaff
-        });
-    });
-
-    return unitAssignments;
-}
-
-// Display assignments by units in the UI
-function displayAssignmentsByUnits(elementId, unitAssignments) {
+// Display assignments by role in the UI
+function displayAssignmentsByRole(elementId, assigned) {
     const container = document.getElementById(elementId);
     container.innerHTML = '';
 
-    unitAssignments.forEach(unit => {
-        const unitDiv = document.createElement('div');
-        unitDiv.className = 'unit-assignment';
+    // Display each role and its assigned staff
+    Object.keys(assigned).forEach(role => {
+        if (assigned[role].length === 0) return; // Skip empty roles
 
-        const unitHeader = document.createElement('div');
-        unitHeader.className = 'unit-header';
-        unitHeader.textContent = `Unit ${unit.unitNumber}`;
-        unitDiv.appendChild(unitHeader);
+        const roleDiv = document.createElement('div');
+        roleDiv.className = 'role-assignment';
+
+        const roleHeader = document.createElement('div');
+        roleHeader.className = 'role-header';
+        roleHeader.textContent = role;
+        roleDiv.appendChild(roleHeader);
 
         const staffList = document.createElement('div');
-        staffList.className = 'unit-staff';
+        staffList.className = 'role-staff';
 
-        Object.keys(unit.assignments).forEach(name => {
-            const role = unit.assignments[name];
+        assigned[role].forEach(name => {
             const staffDiv = document.createElement('div');
-            staffDiv.className = 'staff-role';
-            staffDiv.innerHTML = `<strong>${name}:</strong> ${role}`;
+            staffDiv.className = 'staff-name';
+            staffDiv.textContent = name;
             staffList.appendChild(staffDiv);
         });
 
-        unitDiv.appendChild(staffList);
-        container.appendChild(unitDiv);
+        roleDiv.appendChild(staffList);
+        container.appendChild(roleDiv);
     });
 }
 
